@@ -9282,3 +9282,15 @@ You may wish to exclude one of them to ensure predictable runtime behavior
 2022-05-12 01:45:27.924  INFO 26620 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : Starting OpenaqApplicationTests using Java 17 on LAPTOP-501P7Q36 with PID 26620 (started by devel in D:\2022\Proyectos-Java\Oracle-OpenAQ)
 2022-05-12 01:45:27.926  INFO 26620 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : No active profile set, falling back to 1 default profile: "default"
 2022-05-12 01:45:30.419  INFO 26620 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : Started OpenaqApplicationTests in 3.096 seconds (JVM running for 5.139)
+2022-05-12 12:14:15.696  WARN 10292 --- [main] ory$DuplicateJsonObjectContextCustomizer : 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/C:/Users/devel/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+	jar:file:/C:/Users/devel/.m2/repository/org/json/json/20210307/json-20210307.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behavior
+
+2022-05-12 12:14:15.725  INFO 10292 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : Starting OpenaqApplicationTests using Java 17 on LAPTOP-501P7Q36 with PID 10292 (started by devel in D:\2022\Proyectos-Java\Oracle-OpenAQ)
+2022-05-12 12:14:15.725  INFO 10292 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : No active profile set, falling back to 1 default profile: "default"
+2022-05-12 12:14:17.961  INFO 10292 --- [main] c.o.mx.openaq.OpenaqApplicationTests     : Started OpenaqApplicationTests in 2.752 seconds (JVM running for 4.082)
