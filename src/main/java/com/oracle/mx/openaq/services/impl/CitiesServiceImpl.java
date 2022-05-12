@@ -29,6 +29,7 @@ public class CitiesServiceImpl implements CitiesService {
   public List<String> getAllCities() {
     logger.debug("Into getAllCities service");
 
+    List<String> listCities = new ArrayList();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
@@ -39,26 +40,27 @@ public class CitiesServiceImpl implements CitiesService {
         .getMessageConverters()
         .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
-    ResponseEntity<String> response =
-        restTemplate.exchange(
-            "https://docs.openaq.org/v2/cities",
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<String>() {});
+    try {
+      ResponseEntity<String> response =
+          restTemplate.exchange(
+              "https://docs.openaq.org/v2/cities",
+              HttpMethod.GET,
+              entity,
+              new ParameterizedTypeReference<String>() {});
 
-    logger.debug("Response: ");
-    logger.debug(response.getBody());
+      logger.debug("Response: ");
+      logger.debug(response.getBody());
 
-    JSONObject jsonObject = new JSONObject(response.getBody());
+      JSONObject jsonObject = new JSONObject(response.getBody());
+      JSONArray results = jsonObject.getJSONArray("results");
 
-    JSONArray results = jsonObject.getJSONArray("results");
-
-    List<String> listCities = new ArrayList();
-
-    Gson gson = new Gson();
-    for (Object p : results) {
-      City city = gson.fromJson(p.toString(), City.class);
-      listCities.add(city.getCity());
+      Gson gson = new Gson();
+      for (Object p : results) {
+        City city = gson.fromJson(p.toString(), City.class);
+        listCities.add(city.getCity());
+      }
+    } catch (Exception e) {
+      logger.debug(e.getMessage());
     }
 
     return listCities;
@@ -69,6 +71,7 @@ public class CitiesServiceImpl implements CitiesService {
 
     logger.debug("Into getCitiesByCountry service");
 
+    List<String> listCities = new ArrayList();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
@@ -79,29 +82,31 @@ public class CitiesServiceImpl implements CitiesService {
         .getMessageConverters()
         .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
-    ResponseEntity<String> response =
-        restTemplate.exchange(
-            "https://docs.openaq.org/v2/cities",
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<String>() {});
+    try {
+      ResponseEntity<String> response =
+          restTemplate.exchange(
+              "https://docs.openaq.org/v2/cities",
+              HttpMethod.GET,
+              entity,
+              new ParameterizedTypeReference<String>() {});
 
-    logger.debug("Response: ");
-    logger.debug(response.getBody());
+      logger.debug("Response: ");
+      logger.debug(response.getBody());
 
-    JSONObject jsonObject = new JSONObject(response.getBody());
+      JSONObject jsonObject = new JSONObject(response.getBody());
 
-    JSONArray results = jsonObject.getJSONArray("results");
+      JSONArray results = jsonObject.getJSONArray("results");
 
-    List<String> listCities = new ArrayList();
+      Gson gson = new Gson();
+      for (Object p : results) {
+        City city = gson.fromJson(p.toString(), City.class);
 
-    Gson gson = new Gson();
-    for (Object p : results) {
-      City city = gson.fromJson(p.toString(), City.class);
-
-      if (city.getCountry().equals(country)) {
-        listCities.add(city.getCity());
+        if (city.getCountry().equals(country)) {
+          listCities.add(city.getCity());
+        }
       }
+    } catch (Exception e) {
+      logger.debug(e.getMessage());
     }
 
     return listCities;

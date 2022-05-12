@@ -31,6 +31,7 @@ public class LocationServiceImpl implements LocationService {
 
     logger.debug("Into getLocationById service");
 
+    List<LocationDTO> results = new ArrayList();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
@@ -41,25 +42,27 @@ public class LocationServiceImpl implements LocationService {
         .getMessageConverters()
         .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
-    ResponseEntity<String> response =
-        restTemplate.exchange(
-            "https://docs.openaq.org/v2/locations/" + locationId,
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<String>() {});
+    try {
+      ResponseEntity<String> response =
+          restTemplate.exchange(
+              "https://docs.openaq.org/v2/locations/" + locationId,
+              HttpMethod.GET,
+              entity,
+              new ParameterizedTypeReference<String>() {});
 
-    logger.debug("Response: ");
-    logger.debug(response.getBody());
+      logger.debug("Response: ");
+      logger.debug(response.getBody());
 
-    JSONObject jsonObject = new JSONObject(response.getBody());
-    JSONArray jsonArray = jsonObject.getJSONArray("results");
+      JSONObject jsonObject = new JSONObject(response.getBody());
+      JSONArray jsonArray = jsonObject.getJSONArray("results");
 
-    List<LocationDTO> results = new ArrayList();
-
-    Gson gson = new Gson();
-    for (Object p : jsonArray) {
-      LocationDTO location = gson.fromJson(p.toString(), LocationDTO.class);
-      results.add(location);
+      Gson gson = new Gson();
+      for (Object p : jsonArray) {
+        LocationDTO location = gson.fromJson(p.toString(), LocationDTO.class);
+        results.add(location);
+      }
+    } catch (Exception e) {
+      logger.debug(e.getMessage());
     }
 
     return results;

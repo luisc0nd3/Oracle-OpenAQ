@@ -16,8 +16,8 @@ public class OpenaqApplication {
   @Bean
   public RestTemplate restTemplate() {
     SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-    factory.setConnectTimeout(16000);
-    factory.setReadTimeout(16000);
+    factory.setConnectTimeout(24000);
+    factory.setReadTimeout(24000);
     return new RestTemplate(factory);
   }
 }

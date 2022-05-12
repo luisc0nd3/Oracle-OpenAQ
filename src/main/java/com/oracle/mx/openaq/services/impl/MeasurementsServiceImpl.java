@@ -30,6 +30,7 @@ public class MeasurementsServiceImpl implements MeasurementsService {
 
     logger.debug("into getAll to Measurements service");
 
+    List<MeasurementsResult> listMeasurements = new ArrayList();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(List.of(MediaType.APPLICATION_JSON));
@@ -39,24 +40,24 @@ public class MeasurementsServiceImpl implements MeasurementsService {
         .getMessageConverters()
         .add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
-    ResponseEntity<String> response =
-        restTemplate.exchange(
-            "https://docs.openaq.org/v2/measurements",
-            HttpMethod.GET,
-            entity,
-            new ParameterizedTypeReference<String>() {});
+    try {
+      ResponseEntity<String> response =
+          restTemplate.exchange(
+              "https://docs.openaq.org/v2/measurements",
+              HttpMethod.GET,
+              entity,
+              new ParameterizedTypeReference<String>() {});
 
-    logger.debug("Response: {}", response.getBody());
+      JSONObject jsonObject = new JSONObject(response.getBody());
+      JSONArray results = jsonObject.getJSONArray("results");
 
-    JSONObject jsonObject = new JSONObject(response.getBody());
-    JSONArray results = jsonObject.getJSONArray("results");
-
-    List<MeasurementsResult> listMeasurements = new ArrayList();
-
-    Gson gson = new Gson();
-    for (Object p : results) {
-      MeasurementsResult measurement = gson.fromJson(p.toString(), MeasurementsResult.class);
-      listMeasurements.add(measurement);
+      Gson gson = new Gson();
+      for (Object p : results) {
+        MeasurementsResult measurement = gson.fromJson(p.toString(), MeasurementsResult.class);
+        listMeasurements.add(measurement);
+      }
+    } catch (Exception e) {
+      logger.debug(e.getMessage());
     }
 
     return listMeasurements;

@@ -1,5 +1,6 @@
 package com.oracle.mx.openaq.services.impl;
 
+import com.oracle.mx.openaq.models.dto.Coordinates;
 import com.oracle.mx.openaq.models.dto.HeatmapDTO;
 import com.oracle.mx.openaq.models.dto.MeasurementsResult;
 import com.oracle.mx.openaq.services.CitiesService;
@@ -11,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,23 +43,32 @@ public class HeatmapServiceImpl implements HeatmapService {
     List<HeatmapDTO> listCountries = new ArrayList();
     HeatmapDTO heatmapDTO;
 
-    for (MeasurementsResult m : listMeasurements) {
-      if ((m.getCountry() != null && m.getParameter() != null)
-          && (m.getCountry().equals(country) && m.getParameter().equals(param))) {
+    try {
+      for (MeasurementsResult m : listMeasurements) {
+        if ((m.getCountry() != null && m.getParameter() != null)
+            && (m.getCountry().equals(country) && m.getParameter().equals(param))) {
 
-        heatmapDTO = new HeatmapDTO();
-        heatmapDTO.setCountry(country);
-        heatmapDTO.setCoordinates(m.getCoordinates());
-        heatmapDTO.setParameter(param);
-        heatmapDTO.setUnit(m.getUnit());
-        heatmapDTO.setLocation(m.getLocation());
-        heatmapDTO.setValue(m.getValue());
-        heatmapDTO.setLocationId(m.getLocationId());
-        heatmapDTO.setCities(citiesService.getCitiesByCountry(country));
-        heatmapDTO.setLocationDTO(locationService.getLocationById(m.getLocationId()));
+          heatmapDTO = new HeatmapDTO();
+          heatmapDTO.setCountry(country);
+          heatmapDTO.setCoordinates(
+              (m.getCoordinates() != null) ? m.getCoordinates() : new Coordinates());
+          heatmapDTO.setParameter(param);
+          heatmapDTO.setUnit((m.getUnit() != null) ? m.getUnit() : "");
+          heatmapDTO.setLocation((m.getLocation() != null) ? m.getLocation() : "");
+          heatmapDTO.setValue((m.getValue() != null) ? m.getValue() : new BigDecimal("0"));
+          heatmapDTO.setLocationId(
+              (m.getLocationId() != null) ? m.getLocationId() : BigInteger.valueOf(0));
+          heatmapDTO.setCities(citiesService.getCitiesByCountry(country));
+          heatmapDTO.setLocationDTO(locationService.getLocationById(m.getLocationId()));
 
-        listCountries.add(heatmapDTO);
+          listCountries.add(heatmapDTO);
+        }
       }
+    } catch (NullPointerException e) {
+      logger.debug(e.getMessage());
+      return listCountries;
+    } catch (Exception e) {
+      logger.debug(e.getMessage());
     }
 
     listCountries.sort((HeatmapDTO h1, HeatmapDTO h2) -> h1.getValue().compareTo(h2.getValue()));
@@ -73,7 +86,7 @@ public class HeatmapServiceImpl implements HeatmapService {
     long level = 1;
 
     for (HeatmapDTO h : listCountries) {
-      h.setHexColor(String.format("#%02x%02x%02x", r, g - 5, b));
+      h.setHexColor(String.format("#%02x%02x%02x", r, g--, b));
       h.setLevel(level++);
     }
 
